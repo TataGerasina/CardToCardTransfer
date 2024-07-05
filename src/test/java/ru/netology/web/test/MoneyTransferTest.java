@@ -33,7 +33,6 @@ public class MoneyTransferTest {
         firstCardBalance = dashboardPage.getCardBalance(getMaskedNumber(firstCardInfo.getCardNumber()));
         secondCardBalance = dashboardPage.getCardBalance(getMaskedNumber(secondCardInfo.getCardNumber()));
 
-
         @Test
         void shouldTransferFirstToSecond() {
             var amount = generateValidAmount(firstCardBalance);
