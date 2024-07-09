@@ -3,7 +3,6 @@ package ru.netology.web.test;
 import org.junit.jupiter.api.BeforeEach;
 
 import org.junit.jupiter.api.Test;
-import ru.netology.web.data.DataHelper;
 
 import ru.netology.web.page.DashboardPage;
 import ru.netology.web.page.LoginPageV1;
@@ -23,7 +22,7 @@ public class MoneyTransferTest {
     @BeforeEach
     void setup() {
         var loginPage = open("http://localhost:9999", LoginPageV1.class);
-        var authInfo = DataHelper.getAuthInfo();
+        var authInfo = getAuthInfo();
         var verificationPage = loginPage.validLogin(authInfo);
         var verificationCode = getVerificationCode();
 
@@ -32,6 +31,7 @@ public class MoneyTransferTest {
         secondCardInfo = getSecondCardInfo();
         firstCardBalance = dashboardPage.getCardBalance(getMaskedNumber(firstCardInfo.getCardNumber()));
         secondCardBalance = dashboardPage.getCardBalance(getMaskedNumber(secondCardInfo.getCardNumber()));
+    }
 
         @Test
         void shouldSuccessTransferFirstToSecondCard() {
@@ -47,7 +47,8 @@ public class MoneyTransferTest {
             var actualBalanceSecondCard = dashboardPage.getCardBalance(getMaskedNumber(secondCardInfo.getCardNumber()));
             assertAll(() -> assertEquals(expectedBalanceFirstCard, actualBalanceFirstCard),
                     () -> assertEquals(expectedBalanceSecondCard, actualBalanceSecondCard));
-        }
+    }
+
 
         @Test
         void shouldGetErrorMessageIfAmountMoreBalance() {
@@ -55,6 +56,7 @@ public class MoneyTransferTest {
             var transferPage = dashboardPage.selectCardToTransfer(firstCardInfo);
             transferPage.makeTransfer(String.valueOf(amount), secondCardInfo);
             transferPage.findErrorMessage("Выполнена попытка перевода суммы, превышающей остаток на карте списания");
+            dashboardPage.reloadDashboardPage();
 
             var actualBalanceFirstCard = dashboardPage.getCardBalance(getMaskedNumber(firstCardInfo.getCardNumber()));
             var actualBalanceSecondCard = dashboardPage.getCardBalance(getMaskedNumber(secondCardInfo.getCardNumber()));
@@ -62,5 +64,4 @@ public class MoneyTransferTest {
                     () -> assertEquals(secondCardBalance, actualBalanceSecondCard));
         }
     }
-}
 
